@@ -3,57 +3,56 @@
 #include <io.h>	
 #include <string.h> 
 #include <direct.h>
+#include <stdlib.h>
+
+typedef struct {
+	char *key;
+	char *TopPath;
+}User;
 
 void newUserInfo() {
-
-	// JSON 문서에 저장할 데이터
-	char fileName[] = { "userInfo.json" };
-	char key[15] = {""};
-	char TopPath[200] = { "C:\\InfoBlossum" };
-	char FirstCt[] = {""};
+	char *fileName[] = { "userInfo.json" };	
+	char *FirstCt = (char*)calloc(21, sizeof(char));
+	FILE* fp;
+	User newUser;
+	newUser.key = (char*)calloc(15, sizeof(char));
+	newUser.TopPath = (char*)calloc(65, sizeof(char));
 
 	printf("키를 입력하여 주세요.\nKEY : ");
-	scanf_s("%s", key, 14);
-	/*printf("최상위 폴더 경로 입력 : ");
-	scanf_s("%s", TopPath);*/
-	//printf("최초 카테고리를 입력하여 주세요.");
-	//scanf_s("%s", FirstCt, 100);
+	scanf_s("%s", newUser.key, 14);
+	printf("최상위 폴더 경로 입력하여 주세요 : ");
+	scanf_s("%s", newUser.TopPath, 49);
+	printf("최초 카테고리를 입력하여 주세요 : ");
+	scanf_s("%s", FirstCt, 20);
 	
-	int result = _access(TopPath, 00);
+/*	int result = _access(newUser.TopPath, 00);
 
-	if (result == -1) {
 
-		int mkFolder = _mkdir(TopPath);
-		
-		if (mkFolder == 0) {
-			//strncat(TopPath, FirstCt, strlen(FirstCt));
-			int makeCt = _mkdir("C:\\InfoBlossum\\first");
-
-			if (makeCt == 0) {
-				FILE* fp;
-				fp = fopen("userInfo.json", "w");
-
-				if (fp != NULL) {
-					fprintf(fp, "{\n");
-					fprintf(fp, "  \"%s\": \"%s\",\n", key, TopPath);
-					fprintf(fp, "}\n");
-					fclose(fp);
-				}
-			}
-		}else {
-
-			FILE* fp;
-			fp = fopen(fileName, "a");
-
-			if (fp != NULL) {
-				fprintf(fp, "{\n");
-				fprintf(fp, "  \"%s\": \"%s\",\n", key, TopPath);
-				fprintf(fp, "}\n");
-				fclose(fp);
-			}
-
+	if(result != -1) {
+		printf("해당 경로에 같은 이름의 최상위 폴더가 있습니다.\n이미 있는 폴더에 접근하는 신규 사용자라면 ok를, 아니면 다시 입력해주세요.");
+		scanf_s("%s", FirstCt, 20);
+		if (!strcmp(FirstCt, "ok")) {
+			char* mkCt = (char*)calloc(65, sizeof(char));
+			strcat(mkCt, "\\");
+			strcat(mkCt, FirstCt);
+			int makeCt = _mkdir(mkCt);
 		}
+	} */
+
+	int mkFolder = _mkdir(newUser.TopPath);
+
+	if (mkFolder == 0) {
+		char* mkCt = (char*)calloc(65, sizeof(char));
+		strcpy(mkCt, newUser.TopPath);
+		strcat(mkCt, "\\");
+		strcat(mkCt, FirstCt);
+		int makeCt = _mkdir(mkCt);
 	}
-		//사용자 정보 저장 여부
-		printf("\n\n정보가 저장되었습니다.\n\n");	
+
+	fp = fopen("userInfo.json", "a");
+	if (fp != NULL) fprintf(fp,"%s %s\n", newUser.key, newUser.TopPath);
+	fclose(fp);
+
+	////사용자 정보 저장 여부
+	printf("\n\n정보가 저장되었습니다.\n\n");	
 }
